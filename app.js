@@ -153,7 +153,7 @@ ${[['Nap window · 20 min','Quiet, no jumping: goblet squat, rows, RDL, plank.']
 function coach(){return `<div class="hero"><img src="img/nick.jpg" alt="Nick McDonald in turnouts"><div class="ov"><span class="badge">★ Super Bowl XLV Champion</span><h2 style="margin:6px 0 0">Nick McDonald</h2><div class="small">Firefighter Paramedic, Southern California</div></div></div>
 <div class="card"><div class="lbl">About Coach Nick</div><div class="bio">
 <p>Coach Nick McDonald grew up in Detroit, Michigan. He played college football at Grand Valley State, then went on to an NFL career with the Green Bay Packers, New England Patriots, and Cleveland Browns. With the Packers, he won Super Bowl XLV.</p>
-<p>After football, Nick served in the U.S. Army Special Forces until an injury led to his medical discharge. He then came to California. He started his fire service career in Arizona, then made a lateral move back to California, where he now serves as a Firefighter Paramedic in Southern California. He's a Structure Collapse Specialist, Rope Rescue Technician, Trench Rescue Technician, and Confined Space Technician, and an AHA ACLS &amp; BLS Instructor.</p>
+<p>After football, Nick served in the U.S. Army Special Forces until an injury led to his medical discharge. He then came to California. He started his fire service career in Arizona, then made a lateral move back to California, where he now serves as a Firefighter Paramedic in Southern California. He's a Structure Collapse Specialist, Rope Rescue Technician, Trench Rescue Technician, Confined Space Technician, and an Aquatic Rescue Response Team (ARRT) member, as well as an AHA ACLS &amp; BLS Instructor.</p>
 <p>Nick is a husband and dad of three with a busy schedule, and he has trained through injuries to his shoulder, chest, both knees, ankle, and wrist. He built this app for people like that: firefighters and fire families with busy schedules.</p></div></div>
 <div class="card"><div class="lbl">Career timeline</div><div class="tl">
 <div><b>Hometown</b><span>Detroit, Michigan</span></div>
@@ -166,7 +166,7 @@ function coach(){return `<div class="hero"><img src="img/nick.jpg" alt="Nick McD
 <div><b>Fire service · Arizona</b><span>Started his fire career</span></div>
 <div><b>Fire service · Southern California</b><span>Lateral move back · Firefighter Paramedic</span></div>
 </div></div>
-<div class="card"><div class="lbl">Credentials</div>${['Firefighter Paramedic','Structure Collapse Specialist','Rope Rescue Technician','Trench Rescue Technician','Confined Space Technician','AHA ACLS &amp; BLS Instructor'].map(c=>`<span class="cred">${c}</span>`).join('')}</div>
+<div class="card"><div class="lbl">Credentials</div>${['Firefighter Paramedic','Structure Collapse Specialist','Rope Rescue Technician','Trench Rescue Technician','Confined Space Technician','Aquatic Rescue Response Team (ARRT)','AHA ACLS &amp; BLS Instructor'].map(c=>`<span class="cred">${c}</span>`).join('')}</div>
 <div class="card"><div class="lbl">Photo strip</div><div class="small mut">GVSU → Packers → Patriots → Browns → Military → Fire service. NFL photos held back until usage rights are confirmed.</div></div>
 <button class="btn sec" data-onb>Replay onboarding</button>`}
 function strain(){return `<button class="chip" data-end>‹ Today</button><h2 style="margin-top:10px">Wearable strain <span class="planned">PLANNED</span></h2><div class="small mut">Mockup of a future WHOOP / smartwatch / Fitbit integration. <span class="example">EXAMPLE DATA</span></div>
