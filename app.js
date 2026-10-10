@@ -179,7 +179,7 @@ function dispatch(){return `<button class="chip" data-end>‹ Today</button><h2 
 function onboarding(){let st=0;const a={track:'Firefighter',rot:'48/96',eq:['Station gym'],inj:[],goal:'Job-ready strength'};
  const steps=[['Who are you training?','track',['Firefighter','Fire spouse']],['Equipment','eq',['Station gym','Home dumbbells','Bands','Bodyweight only']],['Any injury flags?','inj',['Low back','Shoulder','Knee','Hip','No overhead','None']],['Main goal','goal',['Job-ready strength','Academy prep','Longevity','Energy & strength','Lose fat']]];
  const s=sheet('');const draw=()=>{const[q,k,o]=steps[st];const multi=Array.isArray(a[k]);
- s.innerHTML=`<div class="grab"></div><div class="steps">${steps.map((_,i)=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>${st==0?'<div class="lbl">Welcome to [App Name]</div>':''}<h2>${q}</h2>
+ s.innerHTML=`<div class="grab"></div><div class="steps">${steps.map((_,i)=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>${st==0?'<div style="text-align:center;margin:4px 0 14px"><img src="img/icon-192.png" style="width:72px;height:72px;border-radius:18px"><div style="font-size:26px;font-weight:900;letter-spacing:.5px;margin-top:8px"><span style="color:var(--org)">LAST SHIFT</span> STRONG</div><div class="mut" style="font-style:italic">Every shift strong.</div></div><div class="lbl">Welcome — let\'s build your plan</div>':''}<h2>${q}</h2>
  <div class="chips">${o.map(x=>`<button class="chip ${(multi?a[k].includes(x):a[k]==x)?'on':''}" data-o="${x}">${x}</button>`).join('')}</div>
  ${k=='inj'?'<p class="small mut">Flag it once — every workout routes around it using swaps from the library. Not medical advice.</p>':''}
  <button class="btn" data-n>${st==steps.length-1?"Build my plan":'Next'}</button>`;
