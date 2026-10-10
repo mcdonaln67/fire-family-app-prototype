@@ -1,6 +1,6 @@
 const L=Object.fromEntries(LIB.map(e=>[e.id,e]));
 const $=s=>document.querySelector(s), M=$('#main');
-const S={p:'ryan',tab:'today',ck:{feel:4,sleep:7,calls:2,tough:false,mins:30},mods:{},done:{},sess:null,qw:{m:15,loc:'Station'},selDay:12};
+const S={p:'ryan',tab:'today',ck:{feel:4,sleep:7,calls:2,tough:false,mins:30},mods:{},done:{},sess:null,qw:{m:15,loc:'Station'},selDay:new Date().getDate()};
 const P={
 ryan:{name:'Ryan',role:'Engine FF · 48/96 · low-back history flag',ctx:'On shift · hour 4 of 48 · Station gym',
  plans:{g:{t:'Call-proof chunks · strength + job task',d:'3 chunks of ~10 min. Stop anytime a call drops; finished chunks count.',x:[['JT03','3 × 30 m'],['SQ02','3 × 8'],['PL01','3 × 10/side'],['CA02','2 × 30 m/side'],['CO01','3 × 30 s']]},
@@ -15,7 +15,9 @@ const TN={g:['Green','Full plan','#2ecc71'],y:['Yellow','Scaled plan','#f5c518']
 const first=s=>(s||'').split(/,|;| or /)[0].trim();
 function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;$('#app').appendChild(d);setTimeout(()=>d.remove(),1800)}
 function setTier(){const t=tierOf(S.ck);document.documentElement.style.setProperty('--tier',TN[t][2]);return t}
-function plan(){return P[S.p].plans[setTier()]}
+function plan(){const t=setTier(),b=P[S.p].plans[t];if(typeof dayMode!='function')return b;const m=dayMode(new Date());
+ if(S.p=='ryan'&&m!='on')return Object.assign({},b,{t:t=='r'?b.t:(m=='post'?'Post-shift day · ':'Day off · ')+'home strength (no call chunks)',d:t=='r'?b.d:'Balanced against what you did on shift. Home garage equipment.'});
+ if(S.p=='jess'&&m!='on')return Object.assign({},b,{t:t=='r'?b.t:'Partner home · full "me time" session',d:t=='r'?b.d:'Ryan is home today, so your plan auto-switched to a longer session.'});return b}
 function exName(i,id){const m=S.mods[S.p+i];const e=L[id];if(!m)return e.name;if(m.k=='swap')return L[m.id].name;return first(e[m.k=='easy'?'easy':'hard'])}
 function exRow(i,id,dose){const m=S.mods[S.p+i],e=L[m&&m.k=='swap'?m.id:id],dn=S.done[S.p+i];
  const tag=m?`<span class="ex-tag" style="background:${m.k=='hard'?'#5a1f0b':'#163a26'}">${m.k=='swap'?'SWAPPED':m.k.toUpperCase()}</span> `:'';
@@ -25,8 +27,8 @@ const tabs=()=>[['today','🔥','Today'],['cal','📅','Calendar'],['crew','👥
 function nav(){$('#nav').innerHTML=tabs().map(([k,i,n])=>`<button data-tab="${k}" class="${S.tab==k?'on':''}"><span>${i}</span>${n}</button>`).join('')}
 function go(t){S.tab=t;stopTimer();render()}
 function render(){nav();const f={today,cal,crew,fam,coach,session,quick,strain,dispatch}[S.tab];M.innerHTML=`<div class="view">${f()}</div>`;M.scrollTop=0;bind()}
-function today(){const p=plan(),t=tierOf(S.ck),c=S.ck,pr=P[S.p];
-return `<div class="small mut">${pr.ctx} <span class="example">EXAMPLE DATA</span></div><h2>Morning, ${pr.name}</h2>
+function today(){const p=plan(),t=tierOf(S.ck),c=S.ck,pr=P[S.p],dm=dayMode(new Date());const ctx=S.p=='ryan'?(dm=='on'?'On shift today ('+SCH.rot+') · Station gym':dm=='post'?'Off · first day after shift · Home':'Off duty · Home garage'):(dm=='on'?'Solo-parenting (Ryan on shift) · Nap window 1:00–3:00 · Home dumbbells':'Partner home (auto-switched) · Ryan off today');
+return `<div class="small mut">${ctx} <span class="example">EXAMPLE DATA</span></div><h2>Morning, ${pr.name}</h2>
 <div class="card"><div class="lbl">Daily check-in · 20 sec</div>
 <div class="row"><span>How do you feel?</span><b id="fv" style="flex:0">${c.feel}/5</b></div><input type="range" min="1" max="5" value="${c.feel}" data-ck="feel">
 <div class="row"><span>Hours slept</span><b style="flex:0">${c.sleep} h</b></div><input type="range" min="0" max="10" value="${c.sleep}" data-ck="sleep">
@@ -80,13 +82,47 @@ function quick(){const q=S.qw,n=q.m/5+1;const pool=LIB.filter(e=>e.intr=='Y'&&(q
 <div class="lbl" style="margin-top:14px">Where</div><div class="chips">${['Station','Home','Travel'].map(l=>`<button class="chip ${q.loc==l?'on':''}" data-ql="${l}">${l}</button>`).join('')}</div>
 <div class="card" style="margin-top:12px"><div class="lbl">${q.m}-min circuit · ${q.m==10?'2':q.m==15?'3':'4'} rounds · auto focus</div>${pick.map(e=>`<div class="ex" data-id="${e.id}"><div class="n"><b>${e.name}</b><span class="small mut">${e.tps} · ${e.eq}</span></div><span>›</span></div>`).join('')}
 <button class="btn" data-qstart>▶ Start ${q.m}-min workout</button></div>`}
-function cal(){const on=d=>{const x=(d-5+60)%6;return x<2};const sel=S.selDay;let g='<div class="h">S</div><div class="h">M</div><div class="h">T</div><div class="h">W</div><div class="h">T</div><div class="h">F</div><div class="h">S</div><div></div><div></div><div></div><div></div>';
- for(let d=1;d<=31;d++)g+=`<div data-day="${d}" class="${on(d)?'on':''} ${d==sel?'sel':''}">${d}</div>`;
- const isOn=on(sel),post=on(sel-1)&&!isOn;const r=S.p=='ryan';
- const txt=r?(isOn?'On shift · call-proof chunks at the station':post?'Off · post-shift recovery check-in first':'Off · home strength or partner workout'):(isOn?'Solo-parenting mode (Ryan on shift) · nap-window session':post?'Ryan home at 0800 · full "me time" session':'Partner home · conditioning or partner workout');
- return `<h2>October 2026</h2><div class="small mut" style="margin-bottom:8px">48/96 rotation · <span style="color:#ffb48a">■</span> ${r?'on shift':"Ryan on shift"} <span class="example">EXAMPLE</span></div>
-<div class="card"><div class="cal">${g}</div></div><div class="card"><div class="lbl">Oct ${sel}</div><h3>${txt}</h3><div class="small mut">The plan follows the rotation automatically — no manual on/off-shift toggle.</div></div>
-<div class="card"><div class="lbl">Rotation</div><div class="chips"><button class="chip on">48/96</button><button class="chip">24/48</button><button class="chip">Kelly</button><button class="chip">Import calendar <span class="planned">PLANNED</span></button></div></div>`}
+// ===== Shift schedule. EDIT PATTERNS HERE: 1 = on shift (24 h), 0 = off. One entry per day in the cycle. =====
+const PATTERNS={
+ '48/96':{d:[1,1,0,0,0,0],note:'48 on, 96 off · 6-day cycle'},
+ '24/72':{d:[1,0,0,0],note:'24 on, 72 off · 4-day cycle'},
+ 'Kelly':{d:[1,0,1,0,1,0,0,0,0],note:'on-off-on-off-on-off-off-off-off · 9-day cycle',plat:true},
+ 'Modified Kelly':{d:[1,0,1,0,1,0,0,0,0],note:'24 on, 24 off, 24 on, 24 off, 24 on, 96 off · 9-day cycle',plat:true},
+ '24/48':{d:[1,0,0],note:'24 on, 48 off · 3-day cycle'},
+ 'Custom':{d:null,note:'Tap days to set your own cycle'}};
+const PLAT_OFFSET={A:0,B:3,C:6}; // days each platoon is shifted from A (Kelly-type patterns)
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const SCH=Object.assign({rot:'48/96',start:'2026-10-05',plat:'A',custom:[1,1,0,0,0,0]},JSON.parse(localStorage.ffSched||'{}'));
+const saveSch=()=>localStorage.ffSched=JSON.stringify(SCH);
+const cyc=()=>SCH.rot=='Custom'?SCH.custom:PATTERNS[SCH.rot].d;
+function onShift(date){const c=cyc(),st=new Date(SCH.start+'T00:00');const dd=Math.round((new Date(iso(date)+'T00:00')-st)/864e5)-(PATTERNS[SCH.rot].plat?PLAT_OFFSET[SCH.plat]:0);return !!c[((dd%c.length)+c.length)%c.length]}
+function dayMode(date){const on=onShift(date),y=new Date(date);y.setDate(y.getDate()-1);return on?'on':onShift(y)?'post':'off'}
+const patStr=c=>c.map(x=>x?'<b style="color:#ffb48a">ON</b>':'<span class="mut">off</span>').join(' · ');
+function scheduleSheet(after){const draw=()=>{const P2=PATTERNS[SCH.rot],c=cyc();
+ s.innerHTML=`<div class="grab" data-close></div><h2>Your shift schedule</h2><div class="lbl">Rotation</div>
+ <div class="chips">${Object.keys(PATTERNS).map(k=>`<button class="chip ${SCH.rot==k?'on':''}" data-rot="${k}">${k}</button>`).join('')}</div>
+ <div class="lbl" style="margin-top:12px">First shift day (start of cycle)</div><input type="date" id="sd" value="${SCH.start}" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:#26262a;color:var(--tx);font-size:16px">
+ ${P2.plat?`<div class="lbl" style="margin-top:12px">Platoon / shift</div><div class="chips">${['A','B','C'].map(k=>`<button class="chip ${SCH.plat==k?'on':''}" data-plat="${k}">${k} shift</button>`).join('')}</div><div class="small mut">B starts 3 days after A, C 6 days after A.</div>`:''}
+ <div class="card" style="margin-top:12px"><div class="lbl">Pattern · ${P2.note}</div>${SCH.rot=='Custom'?`<div class="chips">${c.map((x,i)=>`<button class="chip ${x?'on':''}" data-cd="${i}">D${i+1} ${x?'ON':'off'}</button>`).join('')}</div><div class="row" style="margin-top:8px"><button class="btn sec" data-cl="-1">− Day</button><button class="btn sec" data-cl="1">+ Day</button></div>`:`<div class="small">${patStr(c)}</div>`}
+ <div class="lbl" style="margin-top:10px">Next 14 days</div><div class="small">${[...Array(14)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return `<span style="display:inline-block;width:13%;text-align:center;margin:2px 0;padding:3px 0;border-radius:6px;background:${onShift(d)?'#5a1f0b':'#222'}">${d.getMonth()+1}/${d.getDate()}</span>`}).join(' ')}</div></div>
+ <button class="btn" data-save>Save schedule</button>`;
+ s.querySelectorAll('[data-rot]').forEach(b=>b.onclick=()=>{SCH.rot=b.dataset.rot;draw()});
+ s.querySelectorAll('[data-plat]').forEach(b=>b.onclick=()=>{SCH.plat=b.dataset.plat;draw()});
+ s.querySelectorAll('[data-cd]').forEach(b=>b.onclick=()=>{SCH.custom[+b.dataset.cd]^=1;draw()});
+ s.querySelectorAll('[data-cl]').forEach(b=>b.onclick=()=>{if(+b.dataset.cl>0&&SCH.custom.length<28)SCH.custom.push(0);else if(+b.dataset.cl<0&&SCH.custom.length>2)SCH.custom.pop();draw()});
+ s.querySelector('#sd').onchange=e=>{if(e.target.value){SCH.start=e.target.value;draw()}};
+ s.querySelector('[data-close]').onclick=()=>{bg.remove();s.remove()};
+ s.querySelector('[data-save]').onclick=()=>{saveSch();bg.remove();s.remove();toast(after?'Plan built ✓ (example)':'Schedule saved ✓');render()}};
+ const s=sheet('');const all=document.querySelectorAll('.sheet-bg'),bg=all[all.length-1];draw()}
+function cal(){const now=new Date(),Y=now.getFullYear(),Mo=now.getMonth();const sel=S.selDay;const r=S.p=='ryan';
+ let g=['S','M','T','W','T','F','S'].map(x=>`<div class="h">${x}</div>`).join('')+'<div></div>'.repeat(new Date(Y,Mo,1).getDay());
+ const nd=new Date(Y,Mo+1,0).getDate();for(let d=1;d<=nd;d++)g+=`<div data-day="${d}" class="${onShift(new Date(Y,Mo,d))?'on':''} ${d==sel?'sel':''}" ${d==now.getDate()?'style="text-decoration:underline"':''}>${d}</div>`;
+ const m=dayMode(new Date(Y,Mo,sel));
+ const txt=r?(m=='on'?'On shift · call-proof chunks at the station':m=='post'?'Off · post-shift recovery check-in first':'Off · home strength or partner workout'):(m=='on'?'Solo-parenting mode (Ryan on shift) · nap-window session':m=='post'?'Ryan home at 0800 · full "me time" session':'Partner home · conditioning or partner workout');
+ return `<h2>${now.toLocaleString('en-US',{month:'long'})} ${Y}</h2><div class="small mut" style="margin-bottom:8px">${SCH.rot}${PATTERNS[SCH.rot].plat?' · '+SCH.plat+' shift':''} · <span style="color:#ffb48a">■</span> ${r?'on shift':'Ryan on shift'}</div>
+<div class="card"><div class="cal">${g}</div></div><div class="card"><div class="lbl">${now.toLocaleString('en-US',{month:'short'})} ${sel}</div><h3>${txt}</h3><div class="small mut">The plan follows the rotation automatically — no manual on/off-shift toggle.</div></div>
+<div class="card"><div class="lbl">Pattern · ${PATTERNS[SCH.rot].note}</div><div class="small">${patStr(cyc())}</div><div class="small mut" style="margin-top:6px">First shift day: ${SCH.start}</div>
+<button class="btn" data-sched>✎ Edit schedule</button><div class="small mut" style="margin-top:6px">Calendar import <span class="planned">PLANNED</span></div></div>`}
 function crew(){const r=S.p=='ryan';const rows=r?[['Ryan (you)',412],['Capt. M.',388],['Engineer D.',351],['FF Torres',322],['FF Lee',290]]:[['Jess (you)',268],['Amanda',251],['Kristen',240],['Maria',212]];
  const mx=rows[0][1];return `<h2>${r?'Engine crew · B shift':'Fire spouse crew'}</h2><div class="small mut" style="margin-bottom:8px">Ranked by effort points (scaled to age, size &amp; readiness) so everyone can compete. <span class="example">EXAMPLE DATA</span></div>
 <div class="card"><div class="lbl">This week</div>${rows.sort((a,b)=>b[1]-a[1]).map((x,i)=>`<div class="lb"><span class="rk">${i+1}</span><span class="av">${x[0][0]}</span><div style="flex:1"><b>${x[0]}</b><div class="bar"><i style="width:${x[1]/mx*100}%"></i></div></div><b>${x[1]}</b></div>`).join('')}</div>
@@ -123,14 +159,14 @@ function dispatch(){return `<button class="chip" data-end>‹ Today</button><h2 
 <div class="banner" style="font-size:15px"><b>📟 E-12 dispatched · Medical aid</b><br>Workout auto-paused at 08:42. Finished chunks saved.</div>
 <button class="btn" data-go="session" data-simpause>Simulate: tones drop during a workout</button>`}
 function onboarding(){let st=0;const a={track:'Firefighter',rot:'48/96',eq:['Station gym'],inj:[],goal:'Job-ready strength'};
- const steps=[['Who are you training?','track',['Firefighter','Fire spouse']],['Your rotation','rot',['24/48','48/96','Kelly','Other']],['Equipment','eq',['Station gym','Home dumbbells','Bands','Bodyweight only']],['Any injury flags?','inj',['Low back','Shoulder','Knee','Hip','No overhead','None']],['Main goal','goal',['Job-ready strength','Academy prep','Longevity','Energy & strength','Lose fat']]];
+ const steps=[['Who are you training?','track',['Firefighter','Fire spouse']],['Equipment','eq',['Station gym','Home dumbbells','Bands','Bodyweight only']],['Any injury flags?','inj',['Low back','Shoulder','Knee','Hip','No overhead','None']],['Main goal','goal',['Job-ready strength','Academy prep','Longevity','Energy & strength','Lose fat']]];
  const s=sheet('');const draw=()=>{const[q,k,o]=steps[st];const multi=Array.isArray(a[k]);
  s.innerHTML=`<div class="grab"></div><div class="steps">${steps.map((_,i)=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>${st==0?'<div class="lbl">Welcome to [App Name]</div>':''}<h2>${q}</h2>
  <div class="chips">${o.map(x=>`<button class="chip ${(multi?a[k].includes(x):a[k]==x)?'on':''}" data-o="${x}">${x}</button>`).join('')}</div>
  ${k=='inj'?'<p class="small mut">Flag it once — every workout routes around it using swaps from the library. Not medical advice.</p>':''}
  <button class="btn" data-n>${st==steps.length-1?"Build my plan":'Next'}</button>`;
  s.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const v=b.dataset.o;if(multi){a[k]=a[k].includes(v)?a[k].filter(x=>x!=v):[...a[k],v]}else a[k]=v;draw()});
- s.querySelector('[data-n]').onclick=()=>{if(st<steps.length-1){st++;draw()}else{localStorage.ffOnb=1;S.p=a.track=='Fire spouse'?'jess':'ryan';persona();document.querySelector('.sheet-bg').click();toast('Plan built ✓ (example)');render()}}};draw()}
+ s.querySelector('[data-n]').onclick=()=>{if(st<steps.length-1){st++;draw()}else{localStorage.ffOnb=1;S.p=a.track=='Fire spouse'?'jess':'ryan';persona();document.querySelector('.sheet-bg').click();render();scheduleSheet(true)}}};draw()}
 function persona(){document.querySelectorAll('.persona button').forEach(b=>b.classList.toggle('on',b.dataset.p==S.p))}
 function bind(){const q=(s,f)=>M.querySelectorAll(s).forEach(e=>e.onclick=()=>f(e));
  M.querySelectorAll('[data-ck]').forEach(r=>{r.oninput=()=>{S.ck[r.dataset.ck]=+r.value;r.previousElementSibling.lastElementChild.textContent=r.value+(r.dataset.ck=='feel'?'/5':r.dataset.ck=='sleep'?' h':'');setTier()};r.onchange=()=>{const y=M.scrollTop;render();M.scrollTop=y}});
@@ -149,7 +185,7 @@ function bind(){const q=(s,f)=>M.querySelectorAll(s).forEach(e=>e.onclick=()=>f(
  q('[data-next]',()=>{S.sess.cur++;if(S.sess.cur>=(S.sess.x||plan().x).length)stopTimer();render()});
  q('[data-qm]',e=>{S.qw.m=+e.dataset.qm;render()});q('[data-ql]',e=>{S.qw.loc=e.dataset.ql;render()});
  q('[data-qstart]',()=>{S.sess={el:0,cur:0,paused:false,x:S.qpick.map(e=>[e.id,e.tps+' · '+(S.qw.m/5-1)+' rounds']),t:'⚡ '+S.qw.m+'-min quick workout'};S.tab='session';render()});
- q('[data-day]',e=>{S.selDay=+e.dataset.day;render()});
+ q('[data-day]',e=>{S.selDay=+e.dataset.day;render()});q('[data-sched]',()=>scheduleSheet());
  q('[data-join]',()=>toast('Joined (example)'));q('[data-toast]',e=>toast(e.dataset.toast));q('[data-onb]',onboarding)}
 $('#nav').onclick=e=>{const b=e.target.closest('[data-tab]');if(b)go(b.dataset.tab)};
 document.querySelectorAll('.persona button').forEach(b=>b.onclick=()=>{S.p=b.dataset.p;persona();if(S.tab=='session')S.sess=null,stopTimer(),S.tab='today';render()});
