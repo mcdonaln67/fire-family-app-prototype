@@ -2,7 +2,7 @@ const L=Object.fromEntries(LIB.map(e=>[e.id,e]));
 const $=s=>document.querySelector(s), M=$('#main');
 const S={ff:{mode:'Solo',m:20},p:'ryan',tab:'today',ck:{feel:4,sleep:7,calls:2,tough:false,mins:30},mods:{},done:{},sess:null,qw:{m:15,loc:'Station'},selDay:new Date().getDate()};
 const P={
-ryan:{name:'Ryan',role:'Engine FF · 48/96 · low-back history flag',ctx:'On shift · hour 4 of 48 · Station gym',
+ryan:{name:'Ryan',role:'Engine FF · Modified Kelly · low-back history flag',ctx:'On shift · hour 4 of 48 · Station gym',
  plans:{g:{t:'Call-proof chunks · functional strength',d:'Functional strength with gym equipment in 3 chunks of ~10 min. Stop anytime a call drops; finished chunks count.',x:[['HG03','3 × 5'],['SQ02','3 × 8'],['PL01','3 × 10/side'],['CA02','2 × 30 m/side'],['CO01','3 × 30 s']]},
   y:{t:'Reduced functional chunks · no max efforts',d:'Volume down ~25%. Low-back flag: trap bar deadlift swapped for glute bridge.',x:[['HG01','2 × 12'],['SQ01','2 × 8'],['PL03','2 × 15'],['CO03','2 × 8/side'],['MB02','1 × 5/side']]},
   r:{t:'Recovery day · move, breathe, sleep',d:'Rough night. No training stress today — mobility and an easy walk.',x:[['MB06','4 min'],['MB01','2 × 6/side'],['MB03','2 × 6/side'],['MB04','2 × 45 s/side'],['CD05','15 min easy']]}}},
@@ -102,22 +102,22 @@ const PATTERNS={
  '48/96':{d:[1,1,0,0,0,0],note:'48 on, 96 off · 6-day cycle'},
  '24/72':{d:[1,0,0,0],note:'24 on, 72 off · 4-day cycle'},
  'Kelly':{d:[1,0,1,0,1,0,0,0,0],note:'on-off-on-off-on-off-off-off-off · 9-day cycle',plat:true},
- 'Modified Kelly':{d:[1,0,1,0,1,0,0,0,0],note:'24 on, 24 off, 24 on, 24 off, 24 on, 96 off · 9-day cycle',plat:true},
+ 'Modified Kelly':{d:[1,0,1,0,1,0,1, 0,0,0,0, 1,0,1,0,1,0,1, 0,0,0,0,0,0],note:'4 shifts (24 off between), 4 days off, 4 shifts (24 off between), 6 days off · 24-day cycle',plat:true,off:{A:0,B:8,C:16}},
  '24/48':{d:[1,0,0],note:'24 on, 48 off · 3-day cycle'},
  'Custom':{d:null,note:'Tap days to set your own cycle'}};
-const PLAT_OFFSET={A:0,B:3,C:6}; // days each platoon is shifted from A (Kelly-type patterns)
+const PLAT_OFFSET={A:0,B:3,C:6}; // default days each platoon is shifted from A; a pattern can override with off:{A,B,C}. UNCONFIRMED: adjust to match the department.
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-const SCH=Object.assign({rot:'48/96',start:'2026-10-05',plat:'A',custom:[1,1,0,0,0,0]},JSON.parse(localStorage.ffSched||'{}'));
+const SCH=Object.assign({rot:'Modified Kelly',start:'2026-10-05',plat:'A',custom:[1,1,0,0,0,0]},JSON.parse(localStorage.ffSched||'{}'));
 const saveSch=()=>localStorage.ffSched=JSON.stringify(SCH);
 const cyc=()=>SCH.rot=='Custom'?SCH.custom:PATTERNS[SCH.rot].d;
-function onShift(date){const c=cyc(),st=new Date(SCH.start+'T00:00');const dd=Math.round((new Date(iso(date)+'T00:00')-st)/864e5)-(PATTERNS[SCH.rot].plat?PLAT_OFFSET[SCH.plat]:0);return !!c[((dd%c.length)+c.length)%c.length]}
+function onShift(date){const c=cyc(),st=new Date(SCH.start+'T00:00');const dd=Math.round((new Date(iso(date)+'T00:00')-st)/864e5)-(PATTERNS[SCH.rot].plat?(PATTERNS[SCH.rot].off||PLAT_OFFSET)[SCH.plat]:0);return !!c[((dd%c.length)+c.length)%c.length]}
 function dayMode(date){const on=onShift(date),y=new Date(date);y.setDate(y.getDate()-1);return on?'on':onShift(y)?'post':'off'}
 const patStr=c=>c.map(x=>x?'<b style="color:#ffb48a">ON</b>':'<span class="mut">off</span>').join(' · ');
 function scheduleSheet(after){const draw=()=>{const P2=PATTERNS[SCH.rot],c=cyc();
  s.innerHTML=`<div class="grab" data-close></div><h2>Your shift schedule</h2><div class="lbl">Rotation</div>
  <div class="chips">${Object.keys(PATTERNS).map(k=>`<button class="chip ${SCH.rot==k?'on':''}" data-rot="${k}">${k}</button>`).join('')}</div>
  <div class="lbl" style="margin-top:12px">First shift day (start of cycle)</div><input type="date" id="sd" value="${SCH.start}" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:#26262a;color:var(--tx);font-size:16px">
- ${P2.plat?`<div class="lbl" style="margin-top:12px">Platoon / shift</div><div class="chips">${['A','B','C'].map(k=>`<button class="chip ${SCH.plat==k?'on':''}" data-plat="${k}">${k} shift</button>`).join('')}</div><div class="small mut">B starts 3 days after A, C 6 days after A.</div>`:''}
+ ${P2.plat?`<div class="lbl" style="margin-top:12px">Platoon / shift</div><div class="chips">${['A','B','C'].map(k=>`<button class="chip ${SCH.plat==k?'on':''}" data-plat="${k}">${k} shift</button>`).join('')}</div><div class="small mut">${(()=>{const o=P2.off||PLAT_OFFSET;return 'B starts '+o.B+' days after A, C '+o.C+' days after A'})()} · platoon offsets unconfirmed and adjustable.</div>`:''}
  <div class="card" style="margin-top:12px"><div class="lbl">Pattern · ${P2.note}</div>${SCH.rot=='Custom'?`<div class="chips">${c.map((x,i)=>`<button class="chip ${x?'on':''}" data-cd="${i}">D${i+1} ${x?'ON':'off'}</button>`).join('')}</div><div class="row" style="margin-top:8px"><button class="btn sec" data-cl="-1">− Day</button><button class="btn sec" data-cl="1">+ Day</button></div>`:`<div class="small">${patStr(c)}</div>`}
  <div class="lbl" style="margin-top:10px">Next 14 days</div><div class="small">${[...Array(14)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return `<span style="display:inline-block;width:13%;text-align:center;margin:2px 0;padding:3px 0;border-radius:6px;background:${onShift(d)?'#5a1f0b':'#222'}">${d.getMonth()+1}/${d.getDate()}</span>`}).join(' ')}</div></div>
  <button class="btn" data-save>Save schedule</button>`;
