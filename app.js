@@ -21,14 +21,14 @@ function plan(){const t=setTier(),b=P[S.p].plans[t];if(typeof dayMode!='function
 function exName(i,id){const m=S.mods[S.p+i];const e=L[id];if(!m)return e.name;if(m.k=='swap')return L[m.id].name;return first(e[m.k=='easy'?'easy':'hard'])}
 function exRow(i,id,dose){const m=S.mods[S.p+i],e=L[m&&m.k=='swap'?m.id:id],dn=S.done[S.p+i];
  const tag=m?`<span class="ex-tag" style="background:${m.k=='hard'?'#5a1f0b':'#163a26'}">${m.k=='swap'?'SWAPPED':m.k.toUpperCase()}</span> `:'';
- return `<div class="ex ${dn?'done':''}" data-i="${i}"><div class="chk" data-act="done">${dn?'✓':''}</div><div class="n" data-act="detail"><b>${exName(i,id)}</b><span class="small mut">${tag}${dose} · ${e.id}${e.intr=='Y'?' · call-safe':''}</span></div>
+ return `<div class="ex ${dn?'done':''}" data-i="${i}"><div class="chk" data-act="done">${dn?'✓':''}</div><div class="n" data-act="detail"><b>${exName(i,id)}</b><span class="small mut">${tag}${dose} · ${e.id}${e.intr=='Y'&&S.p!='jess'?' · call-safe':''}</span></div>
  <div class="acts"><button data-act="swap">Swap</button><button data-act="easy">−</button><button data-act="hard">+</button></div></div>`}
-const tabs=()=>[['today','🔥','Today'],['cal','📅','Calendar'],['crew','👥','Crew'],['fam',S.p=='ryan'?'💛':'🧸',S.p=='ryan'?'Spouse':'Kids'],['coach','🧢','Coach']];
+const tabs=()=>[['today','🔥','Today'],['cal','📅','Calendar'],(S.p=='jess'?['crew','💜','Community']:['crew','👥','Crew']),['fam',S.p=='ryan'?'💛':'🧸',S.p=='ryan'?'Spouse':'Kids'],['coach','🧢','Coach']];
 function nav(){$('#nav').innerHTML=tabs().map(([k,i,n])=>`<button data-tab="${k}" class="${S.tab==k?'on':''}"><span>${i}</span>${n}</button>`).join('')}
 function go(t){S.tab=t;stopTimer();render()}
 function render(){nav();const f={today,cal,crew,fam,coach,session,quick,strain,dispatch,ffskills}[S.tab];M.innerHTML=`<div class="view">${f()}</div>`;M.scrollTop=0;bind()}
 function today(){const p=plan(),t=tierOf(S.ck),c=S.ck,pr=P[S.p],dm=dayMode(new Date());const ctx=S.p=='ryan'?(dm=='on'?'On shift today ('+SCH.rot+') · Station gym':dm=='post'?'Off · first day after shift · Home':'Off duty · Home garage'):(dm=='on'?'Solo-parenting (Ryan on shift) · Nap window 1:00–3:00 · Home dumbbells':'Partner home (auto-switched) · Ryan off today');
-return `<div class="small mut">${ctx} <span class="example">EXAMPLE DATA</span></div><h2>Morning, ${pr.name}</h2>
+return `${S.p=='jess'?'<div style="display:inline-block;margin-bottom:6px;padding:3px 9px;border-radius:8px;background:#2a1d3a;border:1px solid #5b3d86;color:#d6b8ff;font-size:12px;font-weight:800">💜 STRONG AT HOME <span style="font-weight:500;opacity:.8">[placeholder program name]</span></div>':''}<div class="small mut">${ctx} <span class="example">EXAMPLE DATA</span></div><h2>Morning, ${pr.name}</h2>
 <div class="card"><div class="lbl">Daily check-in · 20 sec</div>
 <div class="row"><span>How do you feel?</span><b id="fv" style="flex:0">${c.feel}/5</b></div><input type="range" min="1" max="5" value="${c.feel}" data-ck="feel">
 <div class="row"><span>Hours slept</span><b style="flex:0">${c.sleep} h</b></div><input type="range" min="0" max="10" value="${c.sleep}" data-ck="sleep">
@@ -41,18 +41,18 @@ ${p.x.slice(0,c.mins<=15?3:9).map(([id,d],i)=>exRow(i,id,d)).join('')}
 <button class="btn" data-go="session">▶ Start workout</button></div>
 <div class="card" style="display:flex;gap:10px;align-items:center;border-left:3px solid var(--org)"><img src="img/nick.jpg" style="width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:50% 20%"><div class="small"><b style="color:var(--org)">Coach note · Nick</b><br>${S.p=='ryan'?"Tones drop, you stop. Every chunk you finish counts. Don't chase the missed sets.":"Fifteen minutes during nap time is a win. Don't wait for the perfect day."}</div></div>
 ${ffCard()}<div class="row"><button class="btn sec" data-go="quick">⚡ Quick workout</button></div>
-<div class="row"><button class="btn sec" data-go="strain">⌚ Wearable strain <span class="planned">PLANNED</span></button><button class="btn sec" data-go="dispatch">📟 Dispatch <span class="planned">PLANNED</span></button></div>
+${S.p=='jess'?'':`<div class="row"><button class="btn sec" data-go="strain">⌚ Wearable strain <span class="planned">PLANNED</span></button><button class="btn sec" data-go="dispatch">📟 Dispatch <span class="planned">PLANNED</span></button></div>`}
 <p class="small mut" style="margin-top:14px">Prototype with example data. General fitness guidance, not medical advice.</p>`}
 let T=null;
 function stopTimer(){clearInterval(T);T=null}
 function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-function ffCard(){return `<div class="card ffentry" style="border-left:3px solid var(--r)"><div class="lbl">Optional · separate workout</div><h3>🚒 FF Skills Workout</h3><div class="small mut">Job-task conditioning: stair climb, hose drag, dummy drag, sledge, hook pulls, carries, search crawl, hose hoist, patient lift. Solo or with your crew.</div><button class="btn" data-go="ffskills">Choose Solo or Crew</button></div>`}
+function ffCard(){if(S.p=='jess')return '';return `<div class="card ffentry" style="border-left:3px solid var(--r)"><div class="lbl">Optional · separate workout</div><h3>🚒 FF Skills Workout</h3><div class="small mut">Job-task conditioning: stair climb, hose drag, dummy drag, sledge, hook pulls, carries, search crawl, hose hoist, patient lift. Solo or with your crew.</div><button class="btn" data-go="ffskills">Choose Solo or Crew</button></div>`}
 function ffBuild(){const t=tierOf(S.ck),n={10:3,20:5,30:7}[S.ff.m];let pool=LIB.filter(e=>e.pat=='Job-task');const swapped=[];
  const lb=e=>S.p=='ryan'&&/low back/i.test(e.avoid);if(t=='r')pool=pool.filter(e=>{if(lb(e))swapped.push(e.name);return !lb(e)});
  if(t=='r')pool=pool.filter(e=>+e.lvl<=2);
  const x=pool.slice(0,n);const rounds=t=='g'?(S.ff.m/10+1):Math.max(1,S.ff.m/10);
  return {t,x,swapped,rounds,dose:e=>(t=='r'?e.low:e.tps+' work · '+rounds+' round'+(rounds>1?'s':''))+(t=='y'&&lb(e)?' · low-back mod: '+e.inj.split('.')[0]:'')}}
-function ffskills(){const f=ffBuild(),c=S.ff.mode=='Crew';
+function ffskills(){if(S.p=='jess'){S.tab='today';return today()}const f=ffBuild(),c=S.ff.mode=='Crew';
  return `<button class="chip" data-end>‹ Today</button><h2 style="margin-top:10px">🚒 FF Skills Workout</h2><div class="small mut" style="margin-bottom:10px">Optional job-task session — separate from your daily functional workout.</div>
 <div class="big" style="grid-template-columns:1fr 1fr">${['Solo','Crew'].map(m=>`<button class="${S.ff.mode==m?'on':''}" data-ffm="${m}">${m=='Solo'?'🧍':'👥'} ${m}<small>${m=='Solo'?'Just you':'Scenario evolution'}</small></button>`).join('')}</div>
 <div class="lbl" style="margin-top:14px">Length</div><div class="big">${[10,20,30].map(m=>`<button class="${S.ff.m==m?'on':''}" data-ffl="${m}">${m}<small>minutes</small></button>`).join('')}</div>
@@ -89,13 +89,13 @@ function swapSheet(i,id){const e=L[id],alts=LIB.filter(x=>x.pat==e.pat&&x.id!=id
  ${alts.map(a=>`<div class="ex" data-pick="${a.id}"><div class="n"><b>${a.name}</b><span class="small mut">${a.eq} · Level ${a.lvl}${a.intr=='Y'?' · call-safe':''}</span></div><span>›</span></div>`).join('')}
  <button class="btn sec" data-close>Cancel</button>`);
  s.querySelectorAll('[data-pick]').forEach(x=>x.onclick=()=>{S.mods[S.p+i]={k:'swap',id:x.dataset.pick};document.querySelector('.sheet-bg').click();toast('Swapped to '+L[x.dataset.pick].name);render()})}
-function quick(){const q=S.qw,n=q.m/5+1;const pool=LIB.filter(e=>e.intr=='Y'&&e.pat!='Job-task'&&(q.loc=='Station'||!/Station|Barbell|cable|sled|rower|bike|StepMill|tire|ladder|landmine/i.test(e.eq+e.name)));
+function quick(){const q=S.qw,n=q.m/5+1;const sp=S.p=='jess';const pool=LIB.filter(e=>e.intr=='Y'&&e.pat!='Job-task'&&(!sp||!/Station/i.test(e.eq))&&(sp&&q.loc=='Gym'||q.loc=='Station'||!/Station|Barbell|cable|sled|rower|bike|StepMill|tire|ladder|landmine/i.test(e.eq+e.name)));
  const pats=['Squat','Pull-horizontal','Hinge','Push-horizontal','Carry','Core/anti-rotation','Lunge/single-leg','Push-vertical'];
  const pick=S.qpick=pats.map(p=>pool.find(e=>e.pat==p&&!(S.p=='ryan'&&/low back/i.test(e.avoid)&&e.lvl>3))).filter(Boolean).slice(0,n);
- return `<button class="chip" data-end>‹ Today</button><h2 style="margin-top:10px">⚡ Quick workout</h2><div class="small mut" style="margin-bottom:10px">Pick your time. Every move is call-safe and respects your injury flags.</div>
+ return `<button class="chip" data-end>‹ Today</button><h2 style="margin-top:10px">⚡ Quick workout</h2><div class="small mut" style="margin-bottom:10px">${S.p=='jess'?'Pick your time. Kid-friendly, functional moves from the Strong at Home library.':'Pick your time. Every move is call-safe and respects your injury flags.'}</div>
 <div class="big">${[10,15,20].map(m=>`<button class="${q.m==m?'on':''}" data-qm="${m}">${m}<small>minutes</small></button>`).join('')}</div>
-<div class="lbl" style="margin-top:14px">Where</div><div class="chips">${['Station','Home','Travel'].map(l=>`<button class="chip ${q.loc==l?'on':''}" data-ql="${l}">${l}</button>`).join('')}</div>
-<div class="card" style="margin-top:12px"><div class="lbl">${q.m}-min circuit · ${q.m==10?'2':q.m==15?'3':'4'} rounds · auto focus</div>${pick.map(e=>`<div class="ex" data-id="${e.id}"><div class="n"><b>${e.name}</b><span class="small mut">${e.tps} · ${e.eq}</span></div><span>›</span></div>`).join('')}
+<div class="lbl" style="margin-top:14px">Where</div><div class="chips">${(S.p=='jess'?['Home','Gym','Park']:['Station','Home','Travel']).map(l=>`<button class="chip ${q.loc==l?'on':''}" data-ql="${l}">${l}</button>`).join('')}</div>
+<div class="card" style="margin-top:12px"><div class="lbl">${q.m}-min circuit · ${q.m==10?'2':q.m==15?'3':'4'} rounds · auto focus</div>${pick.map(e=>`<div class="ex" data-id="${e.id}"><div class="n"><b>${e.name}</b><span class="small mut">${e.tps} · ${e.eq}${S.p=='jess'&&e.spouse?' · 🧸 '+first(e.spouse):''}</span></div><span>›</span></div>`).join('')}
 <button class="btn" data-qstart>▶ Start ${q.m}-min workout</button></div>${ffCard()}`}
 // ===== Shift schedule. EDIT PATTERNS HERE: 1 = on shift (24 h), 0 = off. One entry per day in the cycle. =====
 const PATTERNS={
@@ -114,7 +114,7 @@ function onShift(date){const c=cyc(),st=new Date(SCH.start+'T00:00');const dd=Ma
 function dayMode(date){const on=onShift(date),y=new Date(date);y.setDate(y.getDate()-1);return on?'on':onShift(y)?'post':'off'}
 const patStr=c=>c.map(x=>x?'<b style="color:#ffb48a">ON</b>':'<span class="mut">off</span>').join(' · ');
 function scheduleSheet(after){const draw=()=>{const P2=PATTERNS[SCH.rot],c=cyc();
- s.innerHTML=`<div class="grab" data-close></div><h2>Your shift schedule</h2><div class="lbl">Rotation</div>
+ s.innerHTML=`<div class="grab" data-close></div><h2>${S.p=='jess'?"Your partner's shift schedule":'Your shift schedule'}</h2>${S.p=='jess'?'<div class="small mut" style="margin-bottom:8px">Used to switch your plan between solo-parenting days and partner-home days.</div>':''}<div class="lbl">Rotation</div>
  <div class="chips">${Object.keys(PATTERNS).map(k=>`<button class="chip ${SCH.rot==k?'on':''}" data-rot="${k}">${k}</button>`).join('')}</div>
  <div class="lbl" style="margin-top:12px">First shift day (start of cycle)</div><input type="date" id="sd" value="${SCH.start}" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:#26262a;color:var(--tx);font-size:16px">
  ${P2.plat?`<div class="lbl" style="margin-top:12px">Platoon / shift</div><div class="chips">${['A','B','C'].map(k=>`<button class="chip ${SCH.plat==k?'on':''}" data-plat="${k}">${k} shift</button>`).join('')}</div><div class="small mut">${(()=>{const o=P2.off||PLAT_OFFSET;return 'B starts '+o.B+' days after A, C '+o.C+' days after A'})()} · platoon offsets unconfirmed and adjustable.</div>`:''}
@@ -138,11 +138,17 @@ function cal(){const now=new Date(),Y=now.getFullYear(),Mo=now.getMonth();const 
 <div class="card"><div class="cal">${g}</div></div><div class="card"><div class="lbl">${now.toLocaleString('en-US',{month:'short'})} ${sel}</div><h3>${txt}</h3><div class="small mut">The plan follows the rotation automatically — no manual on/off-shift toggle.</div></div>
 <div class="card"><div class="lbl">Pattern · ${PATTERNS[SCH.rot].note}</div><div class="small">${patStr(cyc())}</div><div class="small mut" style="margin-top:6px">First shift day: ${SCH.start}</div>
 <button class="btn" data-sched>✎ Edit schedule</button><div class="small mut" style="margin-top:6px">Calendar import <span class="planned">PLANNED</span></div></div>`}
-function crew(){const r=S.p=='ryan';const rows=r?[['Ryan (you)',412],['Capt. M.',388],['Engineer D.',351],['FF Torres',322],['FF Lee',290]]:[['Jess (you)',268],['Amanda',251],['Kristen',240],['Maria',212]];
+function crew(){if(S.p=='jess')return community();const r=S.p=='ryan';const rows=r?[['Ryan (you)',412],['Capt. M.',388],['Engineer D.',351],['FF Torres',322],['FF Lee',290]]:[['Jess (you)',268],['Amanda',251],['Kristen',240],['Maria',212]];
  const mx=rows[0][1];return `<h2>${r?'Engine crew · B shift':'Fire spouse crew'}</h2><div class="small mut" style="margin-bottom:8px">Ranked by effort points (scaled to age, size &amp; readiness) so everyone can compete. <span class="example">EXAMPLE DATA</span></div>
 <div class="card"><div class="lbl">This week</div>${rows.sort((a,b)=>b[1]-a[1]).map((x,i)=>`<div class="lb"><span class="rk">${i+1}</span><span class="av">${x[0][0]}</span><div style="flex:1"><b>${x[0]}</b><div class="bar"><i style="width:${x[1]/mx*100}%"></i></div></div><b>${x[1]}</b></div>`).join('')}</div>
 <div class="card"><div class="lbl">Challenge · ends Sunday</div><h3>${r?'Hose-drag ladder · 10 rounds for time':'30 days of 15 minutes'}</h3><div class="small mut">${r?'Crew scenario evolution: drag, carry, dummy drag. Low-back flags get the sled-push swap automatically.':'Log any 15-min session. Nap windows count.'}</div><button class="btn" data-join>Join challenge</button></div>
 <div class="card"><div class="lbl">Calories from wearables <span class="planned">PLANNED</span></div><div class="small mut">Apple Watch, Garmin, WHOOP, Fitbit and HR straps will feed calories and strain into the board.</div></div>`}
+function community(){const rows=[['Jess (you)',18],['Amanda',17],['Kristen',15],['Maria',14],['Tasha',12]];const mx=rows[0][1];
+ return `<div style="display:inline-block;margin-bottom:6px;padding:3px 9px;border-radius:8px;background:#2a1d3a;border:1px solid #5b3d86;color:#d6b8ff;font-size:12px;font-weight:800">💜 STRONG AT HOME <span style="font-weight:500;opacity:.8">[placeholder]</span></div>
+<h2>Community</h2><div class="small mut" style="margin-bottom:8px">Your accountability group: spouses who get the shift life. <span class="example">EXAMPLE DATA</span></div>
+<div class="card"><div class="lbl">Challenge · 30 days of 15 minutes</div><h3>Any 15-minute session counts</h3><div class="small mut">Nap windows, after bedtime, stroller walks: log it and it counts. Ranked by sessions completed, not calories.</div><button class="btn" data-join>Join challenge</button></div>
+<div class="card"><div class="lbl">Leaderboard · sessions this month</div>${rows.map((x,i)=>`<div class="lb"><span class="rk">${i+1}</span><span class="av" style="background:#3a2a52">${x[0][0]}</span><div style="flex:1"><b>${x[0]}</b><div class="bar"><i style="width:${x[1]/mx*100}%;background:#b07cff"></i></div></div><b>${x[1]}</b></div>`).join('')}</div>
+<div class="card"><div class="lbl">Accountability pod</div><h3>Check in with your 4-person pod</h3><div class="small mut">A quick daily “done ✓” or “rough day” so nobody trains alone on solo-parenting stretches.</div><button class="btn sec" data-toast="Checked in ✓ (example)">Check in today</button></div>`}
 function fam(){if(S.p=='ryan')return `<h2>Jess's week</h2><div class="small mut" style="margin-bottom:8px">Her plan switches automatically with your shifts. <span class="example">EXAMPLE DATA</span></div>
 <div class="card"><div class="lbl">Today · you're on shift</div><h3>Solo-parenting mode</h3><div class="small mut">20-min nap-window circuit at 1:00 PM</div></div>
 <div class="card"><div class="lbl">Fri · shared day off</div><h3>Partner workout 💪</h3><div class="small mut">Med ball passes, partner carries, you-go-I-go intervals. Kids in the garage with chalk.</div><button class="btn sec" data-toast="Added to both calendars (example)">Add to both calendars</button></div>
@@ -177,13 +183,15 @@ function dispatch(){return `<button class="chip" data-end>‹ Today</button><h2 
 <div class="banner" style="font-size:15px"><b>📟 E-12 dispatched · Medical aid</b><br>Workout auto-paused at 08:42. Finished chunks saved.</div>
 <button class="btn" data-go="session" data-simpause>Simulate: tones drop during a workout</button>`}
 function onboarding(){let st=0;const a={track:'Firefighter',rot:'48/96',eq:['Station gym'],inj:[],goal:'Full-career strength'};
- const steps=[['Who are you training?','track',['Firefighter','Fire spouse']],['Equipment','eq',['Station gym','Home dumbbells','Bands','Bodyweight only']],['Any injury flags?','inj',['Low back','Shoulder','Knee','Hip','No overhead','None']],['Main goal','goal',['Full-career strength','Academy prep','Longevity','Energy & strength','Lose fat']]];
- const s=sheet('');const draw=()=>{const[q,k,o]=steps[st];const multi=Array.isArray(a[k]);
- s.innerHTML=`<div class="grab"></div><div class="steps">${steps.map((_,i)=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>${st==0?'<div style="text-align:center;margin:4px 0 14px"><img src="img/icon-192.png" style="width:72px;height:72px;border-radius:18px"><div style="font-size:26px;font-weight:900;letter-spacing:.5px;margin-top:8px"><span style="color:var(--org)">LAST SHIFT</span> STRONG</div><div class="mut" style="font-style:italic">Every shift strong.</div></div><div class="lbl">Welcome — let\'s build your plan</div>':''}<h2>${q}</h2>
+ const FF_STEPS=[['Who are you training?','track',['Firefighter','Fire spouse']],['Equipment','eq',['Station gym','Home dumbbells','Bands','Bodyweight only']],['Any injury flags?','inj',['Low back','Shoulder','Knee','Hip','No overhead','None']],['Main goal','goal',['Full-career strength','Academy prep','Longevity','Energy & strength','Lose fat']]];
+ const SP_STEPS=[FF_STEPS[0],['Where do you train?','eq',['Home dumbbells','Bands','Bodyweight only','Gym membership','Stroller / outdoors']],['Life stage & body','inj',['Postpartum (provider-cleared)','Pregnant (follow your provider)','Low back','Knee','Shoulder','None']],['Your goals','goal',['Strength','Energy','Postpartum-safe progressions','Stress & sleep','Time-crunched (10–20 min)']]];
+ let steps=FF_STEPS;
+ const s=sheet('');const draw=()=>{steps=a.track=='Fire spouse'?SP_STEPS:FF_STEPS;if(a.track=='Fire spouse'&&!Array.isArray(a.goal)){a.goal=['Strength','Energy'];a.eq=['Home dumbbells'];a.inj=[]}if(a.track=='Firefighter'&&Array.isArray(a.goal)){a.goal='Full-career strength';a.eq=['Station gym'];a.inj=[]}const[q,k,o]=steps[st];const multi=Array.isArray(a[k]);
+ s.innerHTML=`<div class="grab"></div><div class="steps">${steps.map((_,i)=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>${st==0?'<div style="text-align:center;margin:4px 0 14px"><img src="img/icon-192.png" style="width:72px;height:72px;border-radius:18px"><div style="font-size:26px;font-weight:900;letter-spacing:.5px;margin-top:8px"><span style="color:var(--org)">LAST SHIFT</span> STRONG</div><div class="mut" style="font-style:italic">Every shift strong.</div></div><div class="lbl">Welcome — let\'s build your plan</div>':''}${st>0&&a.track=='Fire spouse'?'<div class="lbl" style="color:#c9a0ff">💜 Strong at Home program <span class=\'mut\'>[placeholder name]</span></div>':''}<h2>${q}</h2>
  <div class="chips">${o.map(x=>`<button class="chip ${(multi?a[k].includes(x):a[k]==x)?'on':''}" data-o="${x}">${x}</button>`).join('')}</div>
  ${k=='inj'?'<p class="small mut">Flag it once — every workout routes around it using swaps from the library. Not medical advice.</p>':''}
  <button class="btn" data-n>${st==steps.length-1?"Build my plan":'Next'}</button>`;
- s.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const v=b.dataset.o;if(multi){a[k]=a[k].includes(v)?a[k].filter(x=>x!=v):[...a[k],v]}else a[k]=v;draw()});
+ s.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const v=b.dataset.o;if(multi){a[k]=a[k].includes(v)?a[k].filter(x=>x!=v):[...a[k],v]}else a[k]=v;if(k=='track'){S.p=v=='Fire spouse'?'jess':'ryan';S.qw.loc=S.p=='jess'?'Home':'Station';persona();render()}draw()});
  s.querySelector('[data-n]').onclick=()=>{if(st<steps.length-1){st++;draw()}else{localStorage.ffOnb=1;S.p=a.track=='Fire spouse'?'jess':'ryan';persona();document.querySelector('.sheet-bg').click();render();scheduleSheet(true)}}};draw()}
 function persona(){document.querySelectorAll('.persona button').forEach(b=>b.classList.toggle('on',b.dataset.p==S.p))}
 function bind(){const q=(s,f)=>M.querySelectorAll(s).forEach(e=>e.onclick=()=>f(e));
@@ -208,6 +216,6 @@ function bind(){const q=(s,f)=>M.querySelectorAll(s).forEach(e=>e.onclick=()=>f(
  q('[data-ffstart]',()=>{const f=ffBuild();S.sess={el:0,cur:0,paused:false,x:f.x.map(e=>[e.id,f.dose(e)]),t:'🚒 FF Skills · '+S.ff.mode+' · '+S.ff.m+' min'};S.tab='session';render()});
  q('[data-join]',()=>toast('Joined (example)'));q('[data-toast]',e=>toast(e.dataset.toast));q('[data-onb]',onboarding)}
 $('#nav').onclick=e=>{const b=e.target.closest('[data-tab]');if(b)go(b.dataset.tab)};
-document.querySelectorAll('.persona button').forEach(b=>b.onclick=()=>{S.p=b.dataset.p;persona();if(S.tab=='session')S.sess=null,stopTimer(),S.tab='today';render()});
+document.querySelectorAll('.persona button').forEach(b=>b.onclick=()=>{S.p=b.dataset.p;S.qw.loc=S.p=='jess'?'Home':'Station';persona();if(S.tab=='ffskills')S.tab='today';if(S.tab=='session')S.sess=null,stopTimer(),S.tab='today';render()});
 render();if(!localStorage.ffOnb&&!location.hash.includes('skip'))onboarding();
 if('serviceWorker'in navigator&&location.protocol=='https:')navigator.serviceWorker.register('sw.js').then(r=>r.update());navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!window.__rl){window.__rl=1;location.reload()}});

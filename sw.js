@@ -1,4 +1,4 @@
-const C='firefit-v12',F=['./','index.html','app.js','library.js','manifest.webmanifest','img/nick.jpg','img/icon-192.png','img/icon-512.png'];
+const C='firefit-v13',F=['./','index.html','app.js','library.js','manifest.webmanifest','img/nick.jpg','img/icon-192.png','img/icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(F)));self.skipWaiting()});
 // delete every older cache so no stale workouts are ever served
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!==C).map(n=>caches.delete(n)))).then(()=>self.clients.claim())));
