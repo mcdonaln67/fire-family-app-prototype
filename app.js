@@ -153,7 +153,7 @@ ${[['Nap window · 20 min','Quiet, no jumping: goblet squat, rows, RDL, plank.']
 function coach(){return `<div class="hero"><img src="img/nick.jpg" alt="Nick McDonald in turnouts"><div class="ov"><span class="badge">★ Super Bowl XLV Champion</span><h2 style="margin:6px 0 0">Nick McDonald</h2><div class="small">Firefighter Paramedic, Southern California</div></div></div>
 <div class="card"><div class="lbl">About Coach Nick</div><div class="bio">
 <p>Coach Nick McDonald grew up in Detroit, Michigan. He played college football at Grand Valley State, then went on to an NFL career with the Green Bay Packers, New England Patriots, and Cleveland Browns. With the Packers, he won Super Bowl XLV.</p>
-<p>Nick is also a military veteran of the [Branch]. After his football career, he came to California. He started his fire service career in Arizona, then made a lateral move back to California, where he now serves as a Firefighter Paramedic in Southern California. He's a Structure Collapse Specialist, Rope Rescue Technician, Trench Rescue Technician, and Confined Space Technician, and an AHA ACLS &amp; BLS Instructor.</p>
+<p>After football, Nick served in the U.S. Army Special Forces until an injury led to his medical discharge. He then came to California. He started his fire service career in Arizona, then made a lateral move back to California, where he now serves as a Firefighter Paramedic in Southern California. He's a Structure Collapse Specialist, Rope Rescue Technician, Trench Rescue Technician, and Confined Space Technician, and an AHA ACLS &amp; BLS Instructor.</p>
 <p>Nick is a husband and dad of three with a busy schedule, and he has trained through multiple injuries, including [Injuries]. He built this app for people like that: firefighters and fire families with busy schedules.</p></div></div>
 <div class="card"><div class="lbl">Career timeline</div><div class="tl">
 <div><b>Hometown</b><span>Detroit, Michigan</span></div>
@@ -161,7 +161,7 @@ function coach(){return `<div class="hero"><img src="img/nick.jpg" alt="Nick McD
 <div><b>NFL · Green Bay Packers</b><span>Super Bowl XLV Champion</span></div>
 <div><b>NFL · New England Patriots</b></div>
 <div><b>NFL · Cleveland Browns</b></div>
-<div><b>Military</b><span>Veteran · [Branch]</span></div>
+<div><b>Military · U.S. Army Special Forces</b><span>Medically discharged after an injury</span></div>
 <div><b>California</b><span>Moved after his football career</span></div>
 <div><b>Fire service · Arizona</b><span>Started his fire career</span></div>
 <div><b>Fire service · Southern California</b><span>Lateral move back · Firefighter Paramedic</span></div>
