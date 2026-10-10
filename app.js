@@ -46,7 +46,7 @@ ${ffCard()}<div class="row"><button class="btn sec" data-go="quick">⚡ Quick wo
 let T=null;
 function stopTimer(){clearInterval(T);T=null}
 function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-function ffCard(){return `<div class="card" style="border-left:3px solid var(--r)"><div class="lbl">Optional · separate workout</div><h3>🚒 FF Skills Workout</h3><div class="small mut">Job-task conditioning: stair climb, hose drag, dummy drag, sledge, hook pulls, carries, search crawl, hose hoist, patient lift. Solo or with your crew.</div><button class="btn" data-go="ffskills">Choose Solo or Crew</button></div>`}
+function ffCard(){return `<div class="card ffentry" style="border-left:3px solid var(--r)"><div class="lbl">Optional · separate workout</div><h3>🚒 FF Skills Workout</h3><div class="small mut">Job-task conditioning: stair climb, hose drag, dummy drag, sledge, hook pulls, carries, search crawl, hose hoist, patient lift. Solo or with your crew.</div><button class="btn" data-go="ffskills">Choose Solo or Crew</button></div>`}
 function ffBuild(){const t=tierOf(S.ck),n={10:3,20:5,30:7}[S.ff.m];let pool=LIB.filter(e=>e.pat=='Job-task');const swapped=[];
  const lb=e=>S.p=='ryan'&&/low back/i.test(e.avoid);if(t=='r')pool=pool.filter(e=>{if(lb(e))swapped.push(e.name);return !lb(e)});
  if(t=='r')pool=pool.filter(e=>+e.lvl<=2);
@@ -76,7 +76,7 @@ ${s.paused?(s.replan?`<div class="lbl" style="margin-top:12px">Back from the cal
 <div class="card"><div class="lbl">Up next</div>${left.slice(1).map(([id,d])=>`<div class="small" style="padding:4px 0">${L[id].name} · <span class="mut">${d}</span></div>`).join('')||'<span class="mut small">Last one!</span>'}</div>`}
 function detailSheet(id){const e=L[id];sheet(`<span class="ex-tag">${e.id} · ${e.pat}</span><h2 style="margin-top:6px">${e.name}</h2>
 <div class="small mut">${e.mus} · ${e.eq} · Level ${e.lvl}/5 · ${e.tps}/set ${e.intr=='Y'?'· call-safe ✓':''}</div>
-${e.job?`<div class="card" style="margin-top:10px"><div class="lbl">Why it matters on the job</div>${e.job}</div>`:''}
+${e.pat=='Job-task'?`<div class="card" style="margin-top:10px"><div class="lbl">FF Skills · why it matters</div>${e.job}</div>`:`<div style="margin-top:8px"><span class="ex-tag" style="background:#163a26">GYM TRAINING MOVE</span></div>`}
 <div class="card"><div class="lbl">Coaching cues</div>${e.cues}</div>
 <div class="card"><div class="lbl">Easier</div>${e.easy}<div class="lbl" style="margin-top:8px">Harder</div>${e.hard}<div class="lbl" style="margin-top:8px">No-equipment swap</div>${e.noeq}</div>
 <div class="card"><div class="lbl">Injury swaps · avoid/modify: ${e.avoid||'—'}</div>${e.inj}<div class="lbl" style="margin-top:8px">Low-readiness option</div>${e.low}</div>
@@ -146,9 +146,9 @@ function crew(){const r=S.p=='ryan';const rows=r?[['Ryan (you)',412],['Capt. M.'
 function fam(){if(S.p=='ryan')return `<h2>Jess's week</h2><div class="small mut" style="margin-bottom:8px">Her plan switches automatically with your shifts. <span class="example">EXAMPLE DATA</span></div>
 <div class="card"><div class="lbl">Today · you're on shift</div><h3>Solo-parenting mode</h3><div class="small mut">20-min nap-window circuit at 1:00 PM</div></div>
 <div class="card"><div class="lbl">Fri · shared day off</div><h3>Partner workout 💪</h3><div class="small mut">Med ball passes, partner carries, you-go-I-go intervals. Kids in the garage with chalk.</div><button class="btn sec" data-toast="Added to both calendars (example)">Add to both calendars</button></div>
-<div class="card"><div class="lbl">Days-off balance</div><div class="small">Your shift was heavy on legs &amp; carries (hose drags, stairs) → your days off lean upper body &amp; mobility.</div></div>`;
+<div class="card"><div class="lbl">Days-off balance</div><div class="small">Your shift-day sessions loaded legs &amp; carries → your days off lean upper body &amp; mobility.</div></div>`;
 return `<h2>Kids-friendly sessions</h2><div class="small mut" style="margin-bottom:8px">Built for solo-parenting days. <span class="example">EXAMPLE DATA</span></div>
-${[['Nap window · 20 min','Quiet, no jumping: goblet squat, rows, RDL, plank.'],['Living room with the kids · 15 min','Kids join in: bear crawls, "lift the kid" squats, animal walks.'],['Stroller &amp; playground · 25 min','Brisk stroller walk, bench step-ups, push-ups at the slide.'],['After bedtime · 12 min','Low-light, low-noise: dead bugs, bridges, band rows.']].map(([a,b])=>`<div class="card"><h3>${a}</h3><div class="small mut">${b}</div><button class="btn sec" data-go="quick">Start</button></div>`).join('')}
+${[['Nap window · 20 min','Quiet, no jumping: goblet squat, rows, RDL, plank.'],['Living room with the kids · 15 min','Kids join in: bear walks, "lift the kid" squats, animal walks.'],['Stroller &amp; playground · 25 min','Brisk stroller walk, bench step-ups, push-ups at the slide.'],['After bedtime · 12 min','Low-light, low-noise: dead bugs, bridges, band rows.']].map(([a,b])=>`<div class="card"><h3>${a}</h3><div class="small mut">${b}</div><button class="btn sec" data-go="quick">Start</button></div>`).join('')}
 <div class="card"><div class="lbl">Fri · shared day off</div><h3>Partner workout with Ryan 💪</h3></div>`}
 function coach(){return `<div class="hero"><img src="img/nick.jpg" alt="Nick McDonald in turnouts"><div class="ov"><span class="badge">★ Super Bowl XLV Champion</span><h2 style="margin:6px 0 0">Nick McDonald</h2><div class="small">Firefighter Paramedic, Southern California</div></div></div>
 <div class="card"><div class="lbl">About Coach Nick</div><div class="bio">
@@ -176,8 +176,8 @@ function strain(){return `<button class="chip" data-end>‹ Today</button><h2 st
 function dispatch(){return `<button class="chip" data-end>‹ Today</button><h2 style="margin-top:10px">Dispatch link <span class="planned">PLANNED</span></h2><div class="small mut">Future link to a station alerting / dispatch app. When tones drop, the workout pauses itself. <span class="example">EXAMPLE</span></div>
 <div class="banner" style="font-size:15px"><b>📟 E-12 dispatched · Medical aid</b><br>Workout auto-paused at 08:42. Finished chunks saved.</div>
 <button class="btn" data-go="session" data-simpause>Simulate: tones drop during a workout</button>`}
-function onboarding(){let st=0;const a={track:'Firefighter',rot:'48/96',eq:['Station gym'],inj:[],goal:'Job-ready strength'};
- const steps=[['Who are you training?','track',['Firefighter','Fire spouse']],['Equipment','eq',['Station gym','Home dumbbells','Bands','Bodyweight only']],['Any injury flags?','inj',['Low back','Shoulder','Knee','Hip','No overhead','None']],['Main goal','goal',['Job-ready strength','Academy prep','Longevity','Energy & strength','Lose fat']]];
+function onboarding(){let st=0;const a={track:'Firefighter',rot:'48/96',eq:['Station gym'],inj:[],goal:'Full-career strength'};
+ const steps=[['Who are you training?','track',['Firefighter','Fire spouse']],['Equipment','eq',['Station gym','Home dumbbells','Bands','Bodyweight only']],['Any injury flags?','inj',['Low back','Shoulder','Knee','Hip','No overhead','None']],['Main goal','goal',['Full-career strength','Academy prep','Longevity','Energy & strength','Lose fat']]];
  const s=sheet('');const draw=()=>{const[q,k,o]=steps[st];const multi=Array.isArray(a[k]);
  s.innerHTML=`<div class="grab"></div><div class="steps">${steps.map((_,i)=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>${st==0?'<div style="text-align:center;margin:4px 0 14px"><img src="img/icon-192.png" style="width:72px;height:72px;border-radius:18px"><div style="font-size:26px;font-weight:900;letter-spacing:.5px;margin-top:8px"><span style="color:var(--org)">LAST SHIFT</span> STRONG</div><div class="mut" style="font-style:italic">Every shift strong.</div></div><div class="lbl">Welcome — let\'s build your plan</div>':''}<h2>${q}</h2>
  <div class="chips">${o.map(x=>`<button class="chip ${(multi?a[k].includes(x):a[k]==x)?'on':''}" data-o="${x}">${x}</button>`).join('')}</div>
@@ -210,4 +210,4 @@ function bind(){const q=(s,f)=>M.querySelectorAll(s).forEach(e=>e.onclick=()=>f(
 $('#nav').onclick=e=>{const b=e.target.closest('[data-tab]');if(b)go(b.dataset.tab)};
 document.querySelectorAll('.persona button').forEach(b=>b.onclick=()=>{S.p=b.dataset.p;persona();if(S.tab=='session')S.sess=null,stopTimer(),S.tab='today';render()});
 render();if(!localStorage.ffOnb&&!location.hash.includes('skip'))onboarding();
-if('serviceWorker'in navigator&&location.protocol=='https:')navigator.serviceWorker.register('sw.js');
+if('serviceWorker'in navigator&&location.protocol=='https:')navigator.serviceWorker.register('sw.js').then(r=>r.update());navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!window.__rl){window.__rl=1;location.reload()}});

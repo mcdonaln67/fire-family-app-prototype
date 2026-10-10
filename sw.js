@@ -1,4 +1,6 @@
-const C='firefit-v11',F=['./','index.html','app.js','library.js','manifest.webmanifest','img/nick.jpg','img/icon-192.png','img/icon-512.png'];
+const C='firefit-v12',F=['./','index.html','app.js','library.js','manifest.webmanifest','img/nick.jpg','img/icon-192.png','img/icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(F)));self.skipWaiting()});
-self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
-self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));
+// delete every older cache so no stale workouts are ever served
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!==C).map(n=>caches.delete(n)))).then(()=>self.clients.claim())));
+// network-first: always try the live site, fall back to cache only when offline
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{const c=r.clone();caches.open(C).then(x=>x.put(e.request,c));return r}).catch(()=>caches.match(e.request)))});
