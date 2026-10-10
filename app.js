@@ -100,9 +100,19 @@ return `<h2>Kids-friendly sessions</h2><div class="small mut" style="margin-bott
 ${[['Nap window · 20 min','Quiet, no jumping: goblet squat, rows, RDL, plank.'],['Living room with the kids · 15 min','Kids join in: bear crawls, "lift the kid" squats, animal walks.'],['Stroller &amp; playground · 25 min','Brisk stroller walk, bench step-ups, push-ups at the slide.'],['After bedtime · 12 min','Low-light, low-noise: dead bugs, bridges, band rows.']].map(([a,b])=>`<div class="card"><h3>${a}</h3><div class="small mut">${b}</div><button class="btn sec" data-go="quick">Start</button></div>`).join('')}
 <div class="card"><div class="lbl">Fri · shared day off</div><h3>Partner workout with Ryan 💪</h3></div>`}
 function coach(){return `<div class="hero"><img src="img/nick.jpg" alt="Nick McDonald in turnouts"><div class="ov"><span class="badge">★ Super Bowl XLV Champion</span><h2 style="margin:6px 0 0">Nick McDonald</h2><div class="small">Firefighter Paramedic, Southern California</div></div></div>
-<div class="card"><div class="lbl">Career</div><div class="small">Grand Valley State Lakers #77 · Former NFL: Green Bay Packers #67, New England Patriots #65, Cleveland Browns · Military veteran [Branch] · Firefighter Paramedic, Southern California</div></div>
+<div class="card"><div class="lbl">About Coach Nick</div><div class="bio">
+<p>Coach Nick McDonald played college football at Grand Valley State, wearing #77, then went on to an NFL career with the Green Bay Packers, New England Patriots, and Cleveland Browns. With the Packers, he won Super Bowl XLV.</p>
+<p>Nick is also a military veteran of the [Branch]. Today he serves as a Firefighter Paramedic in Southern California. He's a Structure Collapse Specialist, Rope Rescue Technician, Trench Rescue Technician, and Confined Space Technician, and an AHA ACLS &amp; BLS Instructor.</p>
+<p>Nick is a husband and dad of three with a busy schedule, and he has trained through multiple injuries, including [Injuries]. He built this app for people like that: firefighters and fire families with busy schedules.</p></div></div>
+<div class="card"><div class="lbl">Career timeline</div><div class="tl">
+<div><b>College football</b><span>Grand Valley State · #77</span></div>
+<div><b>NFL · Green Bay Packers</b><span>#67 · Super Bowl XLV Champion</span></div>
+<div><b>NFL · New England Patriots</b><span>#65</span></div>
+<div><b>NFL · Cleveland Browns</b><span>[#]</span></div>
+<div><b>Military</b><span>Veteran · [Branch]</span></div>
+<div><b>Fire service</b><span>Firefighter Paramedic · Southern California</span></div>
+</div></div>
 <div class="card"><div class="lbl">Credentials</div>${['Firefighter Paramedic','Structure Collapse Specialist','Rope Rescue Technician','Trench Rescue Technician','Confined Space Technician','AHA ACLS &amp; BLS Instructor'].map(c=>`<span class="cred">${c}</span>`).join('')}</div>
-<div class="card"><div class="lbl">Why I built this</div><div class="small" style="line-height:1.5">"Husband and dad of three. Between the fire service and a busy home, I know how hard it is to find time to train, especially while working around injuries. I built this for people like you." — Nick <span class="mut">[draft]</span></div></div>
 <div class="card"><div class="lbl">Photo strip</div><div class="small mut">GVSU → Packers → Patriots → Browns → Military → Fire service. NFL photos held back until usage rights are confirmed.</div></div>
 <button class="btn sec" data-onb>Replay onboarding</button>`}
 function strain(){return `<button class="chip" data-end>‹ Today</button><h2 style="margin-top:10px">Wearable strain <span class="planned">PLANNED</span></h2><div class="small mut">Mockup of a future WHOOP / smartwatch / Fitbit integration. <span class="example">EXAMPLE DATA</span></div>

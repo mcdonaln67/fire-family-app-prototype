@@ -56,6 +56,10 @@ input[type=range]{width:100%;accent-color:var(--org)}
 .steps{display:flex;gap:5px;margin-bottom:14px}.steps i{flex:1;height:4px;border-radius:2px;background:#333}.steps i.on{background:var(--org)}
 .big{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.big button{background:var(--card);border:1px solid var(--line);color:var(--tx);border-radius:14px;padding:16px 0;font-size:24px;font-weight:800}.big button.on{border-color:var(--org);background:#3a1a10}.big button small{display:block;font-size:11px;color:var(--mut);font-weight:600}
 .row b{white-space:nowrap}
+.bio p{margin:0 0 10px;font-size:14.5px;line-height:1.55;color:#e6e6e6}.bio p:last-child{margin:0}
+.tl{position:relative;padding-left:20px}.tl:before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:#3a3a40}
+.tl div{position:relative;padding:0 0 12px}.tl div:last-child{padding:0}.tl div:before{content:"";position:absolute;left:-20px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--org)}
+.tl div:last-child:before{background:var(--org)}.tl b{display:block;font-size:14px}.tl span{font-size:12.5px;color:var(--mut)}
 </style></head><body><div id="app">
 <header><h1>[App Name] <small>Fire Family Fitness · working title</small></h1>
 <div class="persona"><button data-p="ryan" class="on">Ryan · FF</button><button data-p="jess">Jess · Spouse</button></div></header>
