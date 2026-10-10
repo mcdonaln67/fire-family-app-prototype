@@ -154,7 +154,7 @@ function coach(){return `<div class="hero"><img src="img/nick.jpg" alt="Nick McD
 <div class="card"><div class="lbl">About Coach Nick</div><div class="bio">
 <p>Coach Nick McDonald grew up in Detroit, Michigan. He played college football at Grand Valley State, then went on to an NFL career with the Green Bay Packers, New England Patriots, and Cleveland Browns. With the Packers, he won Super Bowl XLV.</p>
 <p>After football, Nick served in the U.S. Army Special Forces until an injury led to his medical discharge. He then came to California. He started his fire service career in Arizona, then made a lateral move back to California, where he now serves as a Firefighter Paramedic in Southern California. He's a Structure Collapse Specialist, Rope Rescue Technician, Trench Rescue Technician, and Confined Space Technician, and an AHA ACLS &amp; BLS Instructor.</p>
-<p>Nick is a husband and dad of three with a busy schedule, and he has trained through multiple injuries, including [Injuries]. He built this app for people like that: firefighters and fire families with busy schedules.</p></div></div>
+<p>Nick is a husband and dad of three with a busy schedule, and he has trained through injuries to his shoulder, chest, both knees, ankle, and wrist. He built this app for people like that: firefighters and fire families with busy schedules.</p></div></div>
 <div class="card"><div class="lbl">Career timeline</div><div class="tl">
 <div><b>Hometown</b><span>Detroit, Michigan</span></div>
 <div><b>College football</b><span>Grand Valley State</span></div>
