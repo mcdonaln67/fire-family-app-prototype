@@ -1,10 +1,10 @@
 const L=Object.fromEntries(LIB.map(e=>[e.id,e]));
 const $=s=>document.querySelector(s), M=$('#main');
-const S={p:'ryan',tab:'today',ck:{feel:4,sleep:7,calls:2,tough:false,mins:30},mods:{},done:{},sess:null,qw:{m:15,loc:'Station'},selDay:new Date().getDate()};
+const S={ff:{mode:'Solo',m:20},p:'ryan',tab:'today',ck:{feel:4,sleep:7,calls:2,tough:false,mins:30},mods:{},done:{},sess:null,qw:{m:15,loc:'Station'},selDay:new Date().getDate()};
 const P={
 ryan:{name:'Ryan',role:'Engine FF · 48/96 · low-back history flag',ctx:'On shift · hour 4 of 48 · Station gym',
- plans:{g:{t:'Call-proof chunks · strength + job task',d:'3 chunks of ~10 min. Stop anytime a call drops; finished chunks count.',x:[['JT03','3 × 30 m'],['SQ02','3 × 8'],['PL01','3 × 10/side'],['CA02','2 × 30 m/side'],['CO01','3 × 30 s']]},
-  y:{t:'Reduced chunks · no max efforts',d:'Volume down ~25%. Low-back flag: drag swapped for sled push.',x:[['JT05','2 × 15 m light'],['SQ01','2 × 8'],['PL03','2 × 15'],['CO03','2 × 8/side'],['MB02','1 × 5/side']]},
+ plans:{g:{t:'Call-proof chunks · functional strength',d:'Functional strength with gym equipment in 3 chunks of ~10 min. Stop anytime a call drops; finished chunks count.',x:[['HG03','3 × 5'],['SQ02','3 × 8'],['PL01','3 × 10/side'],['CA02','2 × 30 m/side'],['CO01','3 × 30 s']]},
+  y:{t:'Reduced functional chunks · no max efforts',d:'Volume down ~25%. Low-back flag: trap bar deadlift swapped for glute bridge.',x:[['HG01','2 × 12'],['SQ01','2 × 8'],['PL03','2 × 15'],['CO03','2 × 8/side'],['MB02','1 × 5/side']]},
   r:{t:'Recovery day · move, breathe, sleep',d:'Rough night. No training stress today — mobility and an easy walk.',x:[['MB06','4 min'],['MB01','2 × 6/side'],['MB03','2 × 6/side'],['MB04','2 × 45 s/side'],['CD05','15 min easy']]}}},
 jess:{name:'Jess',role:'Fire spouse · 2 kids · postpartum >1 yr, cleared',ctx:'Solo-parenting (Ryan on shift) · Nap window 1:00–3:00 · Home dumbbells',
  plans:{g:{t:'20-min nap-window circuit',d:'Quiet, low-impact moves so the baby stays asleep.',x:[['SQ02','3 × 10'],['PL01','3 × 10/side'],['HG02','3 × 10'],['LG01','2 × 8/side'],['CO01','3 × 30 s']]},
@@ -26,7 +26,7 @@ function exRow(i,id,dose){const m=S.mods[S.p+i],e=L[m&&m.k=='swap'?m.id:id],dn=S
 const tabs=()=>[['today','🔥','Today'],['cal','📅','Calendar'],['crew','👥','Crew'],['fam',S.p=='ryan'?'💛':'🧸',S.p=='ryan'?'Spouse':'Kids'],['coach','🧢','Coach']];
 function nav(){$('#nav').innerHTML=tabs().map(([k,i,n])=>`<button data-tab="${k}" class="${S.tab==k?'on':''}"><span>${i}</span>${n}</button>`).join('')}
 function go(t){S.tab=t;stopTimer();render()}
-function render(){nav();const f={today,cal,crew,fam,coach,session,quick,strain,dispatch}[S.tab];M.innerHTML=`<div class="view">${f()}</div>`;M.scrollTop=0;bind()}
+function render(){nav();const f={today,cal,crew,fam,coach,session,quick,strain,dispatch,ffskills}[S.tab];M.innerHTML=`<div class="view">${f()}</div>`;M.scrollTop=0;bind()}
 function today(){const p=plan(),t=tierOf(S.ck),c=S.ck,pr=P[S.p],dm=dayMode(new Date());const ctx=S.p=='ryan'?(dm=='on'?'On shift today ('+SCH.rot+') · Station gym':dm=='post'?'Off · first day after shift · Home':'Off duty · Home garage'):(dm=='on'?'Solo-parenting (Ryan on shift) · Nap window 1:00–3:00 · Home dumbbells':'Partner home (auto-switched) · Ryan off today');
 return `<div class="small mut">${ctx} <span class="example">EXAMPLE DATA</span></div><h2>Morning, ${pr.name}</h2>
 <div class="card"><div class="lbl">Daily check-in · 20 sec</div>
@@ -40,12 +40,27 @@ ${S.p=='ryan'?`<div class="row"><span>Calls last shift</span><b style="flex:0">$
 ${p.x.slice(0,c.mins<=15?3:9).map(([id,d],i)=>exRow(i,id,d)).join('')}
 <button class="btn" data-go="session">▶ Start workout</button></div>
 <div class="card" style="display:flex;gap:10px;align-items:center;border-left:3px solid var(--org)"><img src="img/nick.jpg" style="width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:50% 20%"><div class="small"><b style="color:var(--org)">Coach note · Nick</b><br>${S.p=='ryan'?"Tones drop, you stop. Every chunk you finish counts. Don't chase the missed sets.":"Fifteen minutes during nap time is a win. Don't wait for the perfect day."}</div></div>
-<div class="row"><button class="btn sec" data-go="quick">⚡ Quick workout</button></div>
+${ffCard()}<div class="row"><button class="btn sec" data-go="quick">⚡ Quick workout</button></div>
 <div class="row"><button class="btn sec" data-go="strain">⌚ Wearable strain <span class="planned">PLANNED</span></button><button class="btn sec" data-go="dispatch">📟 Dispatch <span class="planned">PLANNED</span></button></div>
 <p class="small mut" style="margin-top:14px">Prototype with example data. General fitness guidance, not medical advice.</p>`}
 let T=null;
 function stopTimer(){clearInterval(T);T=null}
 function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function ffCard(){return `<div class="card" style="border-left:3px solid var(--r)"><div class="lbl">Optional · separate workout</div><h3>🚒 FF Skills Workout</h3><div class="small mut">Job-task conditioning: stair climb, hose drag, dummy drag, sledge, hook pulls, carries, search crawl, hose hoist, patient lift. Solo or with your crew.</div><button class="btn" data-go="ffskills">Choose Solo or Crew</button></div>`}
+function ffBuild(){const t=tierOf(S.ck),n={10:3,20:5,30:7}[S.ff.m];let pool=LIB.filter(e=>e.pat=='Job-task');const swapped=[];
+ const lb=e=>S.p=='ryan'&&/low back/i.test(e.avoid);if(t=='r')pool=pool.filter(e=>{if(lb(e))swapped.push(e.name);return !lb(e)});
+ if(t=='r')pool=pool.filter(e=>+e.lvl<=2);
+ const x=pool.slice(0,n);const rounds=t=='g'?(S.ff.m/10+1):Math.max(1,S.ff.m/10);
+ return {t,x,swapped,rounds,dose:e=>(t=='r'?e.low:e.tps+' work · '+rounds+' round'+(rounds>1?'s':''))+(t=='y'&&lb(e)?' · low-back mod: '+e.inj.split('.')[0]:'')}}
+function ffskills(){const f=ffBuild(),c=S.ff.mode=='Crew';
+ return `<button class="chip" data-end>‹ Today</button><h2 style="margin-top:10px">🚒 FF Skills Workout</h2><div class="small mut" style="margin-bottom:10px">Optional job-task session — separate from your daily functional workout.</div>
+<div class="big" style="grid-template-columns:1fr 1fr">${['Solo','Crew'].map(m=>`<button class="${S.ff.mode==m?'on':''}" data-ffm="${m}">${m=='Solo'?'🧍':'👥'} ${m}<small>${m=='Solo'?'Just you':'Scenario evolution'}</small></button>`).join('')}</div>
+<div class="lbl" style="margin-top:14px">Length</div><div class="big">${[10,20,30].map(m=>`<button class="${S.ff.m==m?'on':''}" data-ffl="${m}">${m}<small>minutes</small></button>`).join('')}</div>
+<div class="tier" style="margin-top:12px"><div class="dot"></div><div class="small"><b>${TN[f.t][0]} readiness applied</b><br>${f.t=='g'?'Full dose.':f.t=='y'?'Fewer rounds, no max efforts.':'Light, low-level drills only (or skip today).'}${f.swapped.length?'<br>Low-back flag: removed '+f.swapped.join(', '):''}</div></div>
+<div class="card"><div class="lbl">${c?'Crew scenario · rotate stations in pairs, '+f.rounds+' round(s) for time':'Solo circuit · '+f.rounds+' round(s)'}</div>
+${f.x.map((e,i)=>`<div class="ex" data-id="${e.id}"><div class="n"><b>${c?'Station '+(i+1)+': ':''}${e.name}</b><span class="small mut">${f.dose(e)}</span></div><span>›</span></div>`).join('')}
+${c?`<div class="banner" style="margin-top:10px">🏆 Crew results post to the <b>Crew leaderboard</b> as effort points (scaled for age, size and readiness). One member rotates to timekeeper/safety each round. <span class="example">EXAMPLE</span></div>`:''}
+<button class="btn" data-ffstart>▶ Start ${S.ff.mode.toLowerCase()} FF skills · ${S.ff.m} min</button></div>`}
 function session(){const p=plan(),s=S.sess||(S.sess={el:0,paused:false,replan:false,cur:0});
  if(!s.paused&&!T)T=setInterval(()=>{s.el++;const e=$('#tm');if(e)e.textContent=fmt(s.el)},1000);
  const ex=s.x||p.x;const cur=ex[Math.min(s.cur,ex.length-1)];const left=ex.slice(s.cur);
@@ -69,19 +84,19 @@ ${e.spouse?`<div class="card"><div class="lbl">Spouse-friendly notes</div>${e.sp
 <div class="card" style="text-align:center;padding:30px" ><span class="mut">▶ Nick's demo video goes here</span></div><button class="btn sec" data-close>Close</button>`)}
 function sheet(h){const b=document.createElement('div');b.className='sheet-bg';const s=document.createElement('div');s.className='sheet';s.innerHTML='<div class="grab" data-close style="cursor:pointer"></div><button data-close style="position:absolute;right:12px;top:10px;background:#2a2a2f;border:0;color:#ccc;border-radius:50%;width:30px;height:30px;font-size:16px">✕</button>'+h;
  b.onclick=()=>{b.remove();s.remove()};$('#app').append(b,s);s.querySelectorAll('[data-close]').forEach(x=>x.onclick=b.onclick);return s}
-function swapSheet(i,id){const e=L[id],alts=LIB.filter(x=>x.pat==e.pat&&x.id!=id);
+function swapSheet(i,id){const e=L[id],alts=LIB.filter(x=>x.pat==e.pat&&x.id!=id&&(e.pat=='Job-task'||x.pat!='Job-task'));
  const s=sheet(`<h2>Swap ${e.name}</h2><div class="small mut" style="margin-bottom:8px">Same movement pattern (${e.pat}) from Nick's library. Injury swap: ${e.inj}</div>
  ${alts.map(a=>`<div class="ex" data-pick="${a.id}"><div class="n"><b>${a.name}</b><span class="small mut">${a.eq} · Level ${a.lvl}${a.intr=='Y'?' · call-safe':''}</span></div><span>›</span></div>`).join('')}
  <button class="btn sec" data-close>Cancel</button>`);
  s.querySelectorAll('[data-pick]').forEach(x=>x.onclick=()=>{S.mods[S.p+i]={k:'swap',id:x.dataset.pick};document.querySelector('.sheet-bg').click();toast('Swapped to '+L[x.dataset.pick].name);render()})}
-function quick(){const q=S.qw,n=q.m/5+1;const pool=LIB.filter(e=>e.intr=='Y'&&(q.loc=='Station'||!/Station|Barbell|cable|sled|rower|bike|StepMill|tire|ladder|landmine/i.test(e.eq+e.name)));
- const pats=['Squat','Pull-horizontal','Hinge','Push-horizontal','Carry','Core/anti-rotation','Job-task','Lunge/single-leg'];
+function quick(){const q=S.qw,n=q.m/5+1;const pool=LIB.filter(e=>e.intr=='Y'&&e.pat!='Job-task'&&(q.loc=='Station'||!/Station|Barbell|cable|sled|rower|bike|StepMill|tire|ladder|landmine/i.test(e.eq+e.name)));
+ const pats=['Squat','Pull-horizontal','Hinge','Push-horizontal','Carry','Core/anti-rotation','Lunge/single-leg','Push-vertical'];
  const pick=S.qpick=pats.map(p=>pool.find(e=>e.pat==p&&!(S.p=='ryan'&&/low back/i.test(e.avoid)&&e.lvl>3))).filter(Boolean).slice(0,n);
  return `<button class="chip" data-end>‹ Today</button><h2 style="margin-top:10px">⚡ Quick workout</h2><div class="small mut" style="margin-bottom:10px">Pick your time. Every move is call-safe and respects your injury flags.</div>
 <div class="big">${[10,15,20].map(m=>`<button class="${q.m==m?'on':''}" data-qm="${m}">${m}<small>minutes</small></button>`).join('')}</div>
 <div class="lbl" style="margin-top:14px">Where</div><div class="chips">${['Station','Home','Travel'].map(l=>`<button class="chip ${q.loc==l?'on':''}" data-ql="${l}">${l}</button>`).join('')}</div>
 <div class="card" style="margin-top:12px"><div class="lbl">${q.m}-min circuit · ${q.m==10?'2':q.m==15?'3':'4'} rounds · auto focus</div>${pick.map(e=>`<div class="ex" data-id="${e.id}"><div class="n"><b>${e.name}</b><span class="small mut">${e.tps} · ${e.eq}</span></div><span>›</span></div>`).join('')}
-<button class="btn" data-qstart>▶ Start ${q.m}-min workout</button></div>`}
+<button class="btn" data-qstart>▶ Start ${q.m}-min workout</button></div>${ffCard()}`}
 // ===== Shift schedule. EDIT PATTERNS HERE: 1 = on shift (24 h), 0 = off. One entry per day in the cycle. =====
 const PATTERNS={
  '48/96':{d:[1,1,0,0,0,0],note:'48 on, 96 off · 6-day cycle'},
@@ -186,6 +201,8 @@ function bind(){const q=(s,f)=>M.querySelectorAll(s).forEach(e=>e.onclick=()=>f(
  q('[data-qm]',e=>{S.qw.m=+e.dataset.qm;render()});q('[data-ql]',e=>{S.qw.loc=e.dataset.ql;render()});
  q('[data-qstart]',()=>{S.sess={el:0,cur:0,paused:false,x:S.qpick.map(e=>[e.id,e.tps+' · '+(S.qw.m/5-1)+' rounds']),t:'⚡ '+S.qw.m+'-min quick workout'};S.tab='session';render()});
  q('[data-day]',e=>{S.selDay=+e.dataset.day;render()});q('[data-sched]',()=>scheduleSheet());
+ q('[data-ffm]',e=>{S.ff.mode=e.dataset.ffm;render()});q('[data-ffl]',e=>{S.ff.m=+e.dataset.ffl;render()});
+ q('[data-ffstart]',()=>{const f=ffBuild();S.sess={el:0,cur:0,paused:false,x:f.x.map(e=>[e.id,f.dose(e)]),t:'🚒 FF Skills · '+S.ff.mode+' · '+S.ff.m+' min'};S.tab='session';render()});
  q('[data-join]',()=>toast('Joined (example)'));q('[data-toast]',e=>toast(e.dataset.toast));q('[data-onb]',onboarding)}
 $('#nav').onclick=e=>{const b=e.target.closest('[data-tab]');if(b)go(b.dataset.tab)};
 document.querySelectorAll('.persona button').forEach(b=>b.onclick=()=>{S.p=b.dataset.p;persona();if(S.tab=='session')S.sess=null,stopTimer(),S.tab='today';render()});
